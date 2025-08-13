@@ -104,19 +104,8 @@ public class DrownedSpawnListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPreSpawn(com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent e) {
         if (!shouldCheck(e.getType(), e.getReason())) return;
-        boolean near = nearConduit(e.getSpawnLocation());
-        int bx = e.getSpawnLocation().getBlockX();
-        int by = e.getSpawnLocation().getBlockY();
-        int bz = e.getSpawnLocation().getBlockZ();
-        int chunkX = bx >> 4;
-        int chunkZ = bz >> 4;
-        if (near) {
+        if (nearConduit(e.getSpawnLocation())) {
             e.setCancelled(true);
-            plugin.getLogger().info("Cancelled Drowned spawn at " + bx + "," + by + "," + bz +
-                " (chunk " + chunkX + "," + chunkZ + ")");
-        } else {
-            plugin.getLogger().info("Allowed Drowned spawn at " + bx + "," + by + "," + bz +
-                " (chunk " + chunkX + "," + chunkZ + ")");
         }
     }
 
@@ -135,7 +124,7 @@ public class DrownedSpawnListener implements Listener {
         Map<Long, List<BlockPos>> worldMap = chunkedConduits.get(wid);
         if (worldMap == null || worldMap.isEmpty()) return false;
 
-        final int bx = loc.getBlockX(), by = loc.getBlockY(), bz = loc.getBlockZ();
+        int bx = loc.getBlockX(), bz = loc.getBlockZ();
         int chunkX = bx >> 4, chunkZ = bz >> 4;
 
         // Check all chunks in a 5x5 grid centered on the spawn chunk
@@ -143,11 +132,8 @@ public class DrownedSpawnListener implements Listener {
             for (int dz = -2; dz <= 2; dz++) {
                 long key = (((long)(chunkX + dx)) << 32) | ((chunkZ + dz) & 0xffffffffL);
                 List<BlockPos> list = worldMap.get(key);
-                if (list == null) continue;
-                for (BlockPos p : list) {
-                    if (Math.abs(p.y - by) > 12) continue;
-                    int dX = p.x - bx, dY = p.y - by, dZ = p.z - bz;
-                    if (dX*dX + dY*dY + dZ*dZ <= RADIUS_SQ) return true;
+                if (list != null && !list.isEmpty()) {
+                    return true;
                 }
             }
         }
