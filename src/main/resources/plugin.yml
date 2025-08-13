@@ -1,0 +1,7 @@
+name: ConduitSpawnStopper
+main: com.example.conduitstopper.ConduitSpawnStopper
+version: 1.0
+api-version: 1.21
+commands: {}
+description: "Stops drowned from spawning when conduits are nearby."
+authors: ["Carter4242"]
