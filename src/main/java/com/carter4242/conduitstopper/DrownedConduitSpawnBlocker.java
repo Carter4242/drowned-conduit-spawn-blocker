@@ -8,10 +8,10 @@ import com.carter4242.conduitstopper.storage.ConduitStore;
 import java.io.File;
 
 /**
- * Main plugin class for ConduitSpawnStopper.
+ * Main plugin class for DrownedConduitSpawnBlocker.
  * Prevents drowned from spawning near conduits.
  */
-public class ConduitSpawnStopper extends JavaPlugin {
+public class DrownedConduitSpawnBlocker extends JavaPlugin {
     private DrownedSpawnListener listener;
     private ConduitStore store;
 

@@ -1,5 +1,5 @@
-name: ConduitSpawnStopper
-main: com.carter4242.conduitstopper.ConduitSpawnStopper
+name: DrownedConduitSpawnBlocker
+main: com.carter4242.conduitstopper.DrownedConduitSpawnBlocker
 version: ${project.version}
 api-version: 1.20
 commands: {}
