@@ -14,6 +14,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
+
 import com.carter4242.conduitstopper.storage.BlockPos;
 import com.carter4242.conduitstopper.storage.ConduitStore;
 
@@ -144,7 +146,7 @@ public class DrownedSpawnListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onDrownedPreSpawn(com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent event) {
+    public void onDrownedPreSpawn(PreCreatureSpawnEvent event) {
         if (!shouldPreventSpawn(event.getType(), event.getReason()))
             return;
 
