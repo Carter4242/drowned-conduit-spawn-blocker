@@ -24,7 +24,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Handles conduit placement/removal and prevents drowned spawning near conduits.
+ * Handles conduit placement/removal and prevents drowned spawning near
+ * conduits.
  */
 public class DrownedSpawnListener implements Listener {
     private final int chunkCheckRadius;
@@ -40,7 +41,8 @@ public class DrownedSpawnListener implements Listener {
         store.load();
         loadConduitsFromStore();
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        autosaveTask = Bukkit.getScheduler().runTaskTimer(plugin, store::save, autosaveTicks, autosaveTicks);
+        autosaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, store::save, autosaveTicks,
+                autosaveTicks);
     }
 
     public void shutdown() {
@@ -59,9 +61,9 @@ public class DrownedSpawnListener implements Listener {
         store.forEachConduit((worldId, pos) -> {
             long chunkKey = pos.chunkKey();
             chunkedConduits
-                .computeIfAbsent(worldId, k -> new ConcurrentHashMap<>())
-                .computeIfAbsent(chunkKey, k -> new ArrayList<>())
-                .add(pos);
+                    .computeIfAbsent(worldId, k -> new ConcurrentHashMap<>())
+                    .computeIfAbsent(chunkKey, k -> new ArrayList<>())
+                    .add(pos);
         });
     }
 
@@ -71,12 +73,12 @@ public class DrownedSpawnListener implements Listener {
     private void addConduit(World world, BlockPos position) {
         UUID worldId = world.getUID();
         store.add(worldId, position);
-        
+
         long chunkKey = position.chunkKey();
         chunkedConduits
-            .computeIfAbsent(worldId, k -> new ConcurrentHashMap<>())
-            .computeIfAbsent(chunkKey, k -> new ArrayList<>())
-            .add(position);
+                .computeIfAbsent(worldId, k -> new ConcurrentHashMap<>())
+                .computeIfAbsent(chunkKey, k -> new ArrayList<>())
+                .add(position);
     }
 
     /**
@@ -85,7 +87,7 @@ public class DrownedSpawnListener implements Listener {
     private void removeConduit(World world, BlockPos position) {
         UUID worldId = world.getUID();
         store.remove(worldId, position);
-        
+
         long chunkKey = position.chunkKey();
         Map<Long, List<BlockPos>> worldMap = chunkedConduits.get(worldId);
         if (worldMap != null) {
@@ -104,26 +106,29 @@ public class DrownedSpawnListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onConduitPlace(BlockPlaceEvent event) {
-        if (event.getBlockPlaced().getType() != Material.CONDUIT) return;
-        
+        if (event.getBlockPlaced().getType() != Material.CONDUIT)
+            return;
+
         Location loc = event.getBlockPlaced().getLocation();
         addConduit(event.getBlockPlaced().getWorld(),
-                   new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onConduitBreak(BlockBreakEvent event) {
-        if (event.getBlock().getType() != Material.CONDUIT) return;
-        
+        if (event.getBlock().getType() != Material.CONDUIT)
+            return;
+
         Location loc = event.getBlock().getLocation();
         removeConduit(event.getBlock().getWorld(),
-                      new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDrownedPreSpawn(com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent event) {
-        if (!shouldPreventSpawn(event.getType(), event.getReason())) return;
-        
+        if (!shouldPreventSpawn(event.getType(), event.getReason()))
+            return;
+
         if (isNearConduit(event.getSpawnLocation())) {
             event.setShouldAbortSpawn(true);
             event.setCancelled(true);
@@ -131,11 +136,13 @@ public class DrownedSpawnListener implements Listener {
     }
 
     /**
-     * Determines if drowned spawning should be prevented for the given spawn reason.
+     * Determines if drowned spawning should be prevented for the given spawn
+     * reason.
      */
     private boolean shouldPreventSpawn(EntityType entityType, CreatureSpawnEvent.SpawnReason reason) {
-        if (entityType != EntityType.DROWNED) return false;
-        
+        if (entityType != EntityType.DROWNED)
+            return false;
+
         return switch (reason) {
             case NATURAL, REINFORCEMENTS -> true;
             default -> false;
@@ -147,11 +154,13 @@ public class DrownedSpawnListener implements Listener {
      */
     private boolean isNearConduit(Location location) {
         World world = location.getWorld();
-        if (world == null) return false;
-        
+        if (world == null)
+            return false;
+
         UUID worldId = world.getUID();
         Map<Long, List<BlockPos>> worldMap = chunkedConduits.get(worldId);
-        if (worldMap == null || worldMap.isEmpty()) return false;
+        if (worldMap == null || worldMap.isEmpty())
+            return false;
 
         int blockX = location.getBlockX();
         int blockZ = location.getBlockZ();
@@ -161,7 +170,7 @@ public class DrownedSpawnListener implements Listener {
         // Check all chunks in a grid centered on the spawn chunk
         for (int dx = -chunkCheckRadius; dx <= chunkCheckRadius; dx++) {
             for (int dz = -chunkCheckRadius; dz <= chunkCheckRadius; dz++) {
-                long chunkKey = (((long)(chunkX + dx)) << 32) | ((chunkZ + dz) & 0xffffffffL);
+                long chunkKey = (((long) (chunkX + dx)) << 32) | ((chunkZ + dz) & 0xffffffffL);
                 List<BlockPos> chunkConduits = worldMap.get(chunkKey);
                 if (chunkConduits != null && !chunkConduits.isEmpty()) {
                     return true;

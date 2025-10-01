@@ -14,9 +14,17 @@ public final class BlockPos {
         this.z = z;
     }
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getZ() { return z; }
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
 
     /**
      * Calculates a unique key for the chunk containing this position.
@@ -25,13 +33,20 @@ public final class BlockPos {
         return (((long) (x >> 4)) << 32) ^ ((z >> 4) & 0xffffffffL);
     }
 
-    public int chunkX() { return x >> 4; }
-    public int chunkZ() { return z >> 4; }
+    public int chunkX() {
+        return x >> 4;
+    }
+
+    public int chunkZ() {
+        return z >> 4;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BlockPos blockPos)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof BlockPos blockPos))
+            return false;
         return x == blockPos.x && y == blockPos.y && z == blockPos.z;
     }
 

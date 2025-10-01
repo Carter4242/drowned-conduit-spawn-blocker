@@ -33,7 +33,8 @@ public final class ConduitStore {
     public void load() {
         data.clear();
         dirty = false;
-        if (!file.exists()) return;
+        if (!file.exists())
+            return;
 
         try {
             YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
@@ -42,14 +43,14 @@ public final class ConduitStore {
                     UUID worldId = UUID.fromString(worldKey);
                     List<String> positions = cfg.getStringList(worldKey);
                     Set<BlockPos> conduitSet = new HashSet<>();
-                    
+
                     for (String positionStr : positions) {
                         BlockPos pos = parseBlockPos(positionStr);
                         if (pos != null) {
                             conduitSet.add(pos);
                         }
                     }
-                    
+
                     if (!conduitSet.isEmpty()) {
                         data.put(worldId, conduitSet);
                     }
@@ -66,7 +67,8 @@ public final class ConduitStore {
      * Saves conduit data to the configuration file if changes have been made.
      */
     public void save() {
-        if (!dirty) return;
+        if (!dirty)
+            return;
 
         try {
             YamlConfiguration cfg = new YamlConfiguration();
@@ -98,8 +100,9 @@ public final class ConduitStore {
      */
     public void remove(UUID worldId, BlockPos position) {
         Set<BlockPos> worldConduits = data.get(worldId);
-        if (worldConduits == null) return;
-        
+        if (worldConduits == null)
+            return;
+
         if (worldConduits.remove(position)) {
             dirty = true;
             if (worldConduits.isEmpty()) {
@@ -120,8 +123,7 @@ public final class ConduitStore {
      * Executes a function for each conduit across all worlds.
      */
     public void forEachConduit(BiConsumer<UUID, BlockPos> consumer) {
-        data.forEach((worldId, conduits) -> 
-            conduits.forEach(pos -> consumer.accept(worldId, pos)));
+        data.forEach((worldId, conduits) -> conduits.forEach(pos -> consumer.accept(worldId, pos)));
     }
 
     /**
@@ -140,12 +142,13 @@ public final class ConduitStore {
     private BlockPos parseBlockPos(String positionStr) {
         try {
             String[] parts = positionStr.split(",");
-            if (parts.length != 3) return null;
-            
+            if (parts.length != 3)
+                return null;
+
             int x = Integer.parseInt(parts[0].trim());
             int y = Integer.parseInt(parts[1].trim());
             int z = Integer.parseInt(parts[2].trim());
-            
+
             return new BlockPos(x, y, z);
         } catch (NumberFormatException e) {
             logger.warning("Invalid position format: " + positionStr);

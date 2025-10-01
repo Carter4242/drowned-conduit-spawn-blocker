@@ -6,4 +6,5 @@
 autosave-ticks: 6000
 
 # How many chunks away to check for conduits (default: 2 = 5x5 chunk grid around conduit)
+# 0 would be just the chunk the conduit is in it's in
 chunk-check-radius: 2
