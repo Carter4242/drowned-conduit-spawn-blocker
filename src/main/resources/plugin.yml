@@ -1,5 +1,5 @@
 name: ConduitSpawnStopper
-main: com.example.conduitstopper.ConduitSpawnStopper
+main: com.carter4242.conduitstopper.ConduitSpawnStopper
 version: ${project.version}
 api-version: 1.21
 commands: {}
