@@ -1,11 +1,9 @@
 package com.example.conduitstopper;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import java.util.UUID;
@@ -24,18 +21,14 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DrownedSpawnListener implements Listener {
-    private static final int RADIUS = 32;
-    private static final int RADIUS_SQ = RADIUS * RADIUS;
     private static final long AUTOSAVE_TICKS = 20L * 60L * 30; // 30 minutes
 
     // World UUID -> (ChunkKey -> List<BlockPos>)
     private final Map<UUID, Map<Long, List<BlockPos>>> chunkedConduits = new ConcurrentHashMap<>();
     private final ConduitStore store;
     private BukkitTask autosaveTask;
-    private final Plugin plugin;
 
     public DrownedSpawnListener(Plugin plugin) {
-        this.plugin = plugin;
         this.store = new ConduitStore(new java.io.File(plugin.getDataFolder(), "conduits.yml"));
         store.load();
         loadConduitsFromStore();
