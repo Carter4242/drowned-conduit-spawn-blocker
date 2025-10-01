@@ -27,20 +27,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * Handles conduit placement/removal and prevents drowned spawning near conduits.
  */
 public class DrownedSpawnListener implements Listener {
-    private static final long AUTOSAVE_TICKS = 20L * 60L * 30; // 30 minutes
-    private static final int CHUNK_CHECK_RADIUS = 2; // Check 5x5 chunk grid
+    private final int chunkCheckRadius;
 
     // World UUID -> (ChunkKey -> List<BlockPos>)
     private final Map<UUID, Map<Long, List<BlockPos>>> chunkedConduits = new ConcurrentHashMap<>();
     private final ConduitStore store;
     private BukkitTask autosaveTask;
 
-    public DrownedSpawnListener(Plugin plugin, ConduitStore store) {
+    public DrownedSpawnListener(Plugin plugin, ConduitStore store, int chunkCheckRadius, long autosaveTicks) {
         this.store = store;
+        this.chunkCheckRadius = chunkCheckRadius;
         store.load();
         loadConduitsFromStore();
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        autosaveTask = Bukkit.getScheduler().runTaskTimer(plugin, store::save, AUTOSAVE_TICKS, AUTOSAVE_TICKS);
+        autosaveTask = Bukkit.getScheduler().runTaskTimer(plugin, store::save, autosaveTicks, autosaveTicks);
     }
 
     public void shutdown() {
@@ -158,9 +158,9 @@ public class DrownedSpawnListener implements Listener {
         int chunkX = blockX >> 4;
         int chunkZ = blockZ >> 4;
 
-        // Check all chunks in a 5x5 grid centered on the spawn chunk
-        for (int dx = -CHUNK_CHECK_RADIUS; dx <= CHUNK_CHECK_RADIUS; dx++) {
-            for (int dz = -CHUNK_CHECK_RADIUS; dz <= CHUNK_CHECK_RADIUS; dz++) {
+        // Check all chunks in a grid centered on the spawn chunk
+        for (int dx = -chunkCheckRadius; dx <= chunkCheckRadius; dx++) {
+            for (int dz = -chunkCheckRadius; dz <= chunkCheckRadius; dz++) {
                 long chunkKey = (((long)(chunkX + dx)) << 32) | ((chunkZ + dz) & 0xffffffffL);
                 List<BlockPos> chunkConduits = worldMap.get(chunkKey);
                 if (chunkConduits != null && !chunkConduits.isEmpty()) {

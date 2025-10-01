@@ -17,17 +17,24 @@ public class ConduitSpawnStopper extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Ensure config.yml exists
+        saveDefaultConfig();
+
         // Create data folder if it doesn't exist
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
         }
 
+        // Read config values
+        int chunkCheckRadius = getConfig().getInt("chunk-check-radius", 2);
+        long autosaveTicks = getConfig().getLong("autosave-ticks", 6000L);
+
         // Initialize storage
         File conduitsFile = new File(getDataFolder(), "conduits.yml");
         store = new ConduitStore(conduitsFile, getLogger());
 
-        // Initialize listener
-        listener = new DrownedSpawnListener(this, store);
+        // Initialize listener with config values
+        listener = new DrownedSpawnListener(this, store, chunkCheckRadius, autosaveTicks);
 
         getLogger().info("ConduitSpawnStopper has been enabled!");
     }
