@@ -1,9 +1,9 @@
-package com.carter4242.conduitstopper;
+package com.carter4242.conduitblocker;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.carter4242.conduitstopper.listener.DrownedSpawnListener;
-import com.carter4242.conduitstopper.storage.ConduitStore;
+import com.carter4242.conduitblocker.listener.DrownedSpawnListener;
+import com.carter4242.conduitblocker.storage.ConduitStore;
 
 import java.io.File;
 

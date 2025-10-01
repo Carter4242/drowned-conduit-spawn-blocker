@@ -1,4 +1,4 @@
-package com.carter4242.conduitstopper.listener;
+package com.carter4242.conduitblocker.listener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,10 +14,9 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.carter4242.conduitblocker.storage.BlockPos;
+import com.carter4242.conduitblocker.storage.ConduitStore;
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
-
-import com.carter4242.conduitstopper.storage.BlockPos;
-import com.carter4242.conduitstopper.storage.ConduitStore;
 
 import java.util.List;
 import java.util.ArrayList;

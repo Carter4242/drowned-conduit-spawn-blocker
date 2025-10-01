@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.carter4242</groupId>
-    <artifactId>drowned-conduit-spawn-stopper</artifactId>
+    <artifactId>drowned-conduit-spawn-blocker</artifactId>
     <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>DrownedConduitSpawnBlocker</name>
@@ -50,7 +50,7 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>com.carter4242.conduitstopper.bstats</shadedPattern>
+                            <shadedPattern>com.carter4242.conduitblocker.bstats</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

@@ -26,6 +26,6 @@ jobs:
       - name: Upload jar artifact
         uses: actions/upload-artifact@v4
         with:
-          name: drowned-conduit-spawn-stopper-jar
-          path: ${{ github.workspace }}/target/drowned-conduit-spawn-stopper-*.jar
+          name: drowned-conduit-spawn-blocker-jar
+          path: ${{ github.workspace }}/target/drowned-conduit-spawn-blocker-*.jar
           if-no-files-found: error
