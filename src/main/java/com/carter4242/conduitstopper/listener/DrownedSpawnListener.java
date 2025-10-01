@@ -40,6 +40,9 @@ public class DrownedSpawnListener implements Listener {
     private final ConduitStore store;
     private BukkitTask autosaveTask;
 
+    // Counter for spawns prevented (for bStats)
+    private int spawnsPrevented = 0;
+
     public DrownedSpawnListener(Plugin plugin, ConduitStore store, int chunkCheckRadius, long autosaveTicks,
             boolean debug) {
         this.plugin = plugin;
@@ -154,6 +157,9 @@ public class DrownedSpawnListener implements Listener {
         if (isNearConduit(loc)) {
             event.setShouldAbortSpawn(true);
             event.setCancelled(true);
+            synchronized (this) {
+                spawnsPrevented++;
+            }
             if (debug) {
                 Bukkit.getLogger().info(String.format("Drowned spawn prevented at [%d, %d, %d]", loc.getBlockX(),
                         loc.getBlockY(), loc.getBlockZ()));
@@ -209,5 +215,14 @@ public class DrownedSpawnListener implements Listener {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the number of spawns prevented since last call and resets the counter.
+     */
+    public synchronized int getAndResetSpawnsPrevented() {
+        int value = spawnsPrevented;
+        spawnsPrevented = 0;
+        return value;
     }
 }

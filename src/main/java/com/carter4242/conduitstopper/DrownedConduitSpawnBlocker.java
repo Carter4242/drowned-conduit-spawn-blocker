@@ -42,7 +42,15 @@ public class DrownedConduitSpawnBlocker extends JavaPlugin {
 
         // bStats Metrics integration
         int pluginId = 27422;
-        new Metrics(this, pluginId);
+        Metrics metrics = new Metrics(this, pluginId);
+        // Register custom chart for spawns prevented per hour
+        metrics.addCustomChart(
+                new org.bstats.charts.SingleLineChart("spawns_prevented", new java.util.concurrent.Callable<Integer>() {
+                    @Override
+                    public Integer call() {
+                        return listener.getAndResetSpawnsPrevented();
+                    }
+                }));
 
         getLogger().info("ConduitSpawnStopper has been enabled!");
     }
