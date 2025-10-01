@@ -30,21 +30,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DrownedSpawnListener implements Listener {
     private final int chunkCheckRadius;
     private final boolean debug;
+    private final long autosaveTicks;
+    private final Plugin plugin;
 
     // World UUID -> (ChunkKey -> List<BlockPos>)
     private final Map<UUID, Map<Long, List<BlockPos>>> chunkedConduits = new ConcurrentHashMap<>();
     private final ConduitStore store;
     private BukkitTask autosaveTask;
 
-    public DrownedSpawnListener(Plugin plugin, ConduitStore store, int chunkCheckRadius, long autosaveTicks, boolean debug) {
+    public DrownedSpawnListener(Plugin plugin, ConduitStore store, int chunkCheckRadius, long autosaveTicks,
+            boolean debug) {
+        this.plugin = plugin;
         this.store = store;
         this.chunkCheckRadius = chunkCheckRadius;
         this.debug = debug;
+        this.autosaveTicks = autosaveTicks;
+
         store.load();
         loadConduitsFromStore();
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        autosaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, store::save, autosaveTicks,
-                autosaveTicks);
+
+        // if autosaveTicks abive 0, run task perodically
+        // if autosaveTicks is 0 or below, it will instatnly save on change
+        if (autosaveTicks > 0) {
+            autosaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, store::save, autosaveTicks,
+                    autosaveTicks);
+        }
     }
 
     public void shutdown() {
@@ -75,12 +86,15 @@ public class DrownedSpawnListener implements Listener {
     private void addConduit(World world, BlockPos position) {
         UUID worldId = world.getUID();
         store.add(worldId, position);
-
         long chunkKey = position.chunkKey();
         chunkedConduits
                 .computeIfAbsent(worldId, k -> new ConcurrentHashMap<>())
                 .computeIfAbsent(chunkKey, k -> new ArrayList<>())
                 .add(position);
+
+        if (autosaveTicks <= 0) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, store::save);
+        }
     }
 
     /**
@@ -89,7 +103,6 @@ public class DrownedSpawnListener implements Listener {
     private void removeConduit(World world, BlockPos position) {
         UUID worldId = world.getUID();
         store.remove(worldId, position);
-
         long chunkKey = position.chunkKey();
         Map<Long, List<BlockPos>> worldMap = chunkedConduits.get(worldId);
         if (worldMap != null) {
@@ -103,6 +116,10 @@ public class DrownedSpawnListener implements Listener {
             if (worldMap.isEmpty()) {
                 chunkedConduits.remove(worldId);
             }
+        }
+
+        if (autosaveTicks <= 0) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, store::save);
         }
     }
 
