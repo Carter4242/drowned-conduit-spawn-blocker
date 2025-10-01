@@ -28,13 +28,14 @@ public class ConduitSpawnStopper extends JavaPlugin {
         // Read config values
         int chunkCheckRadius = getConfig().getInt("chunk-check-radius", 2);
         long autosaveTicks = getConfig().getLong("autosave-ticks", 6000L);
+        boolean debug = getConfig().getBoolean("debug", false);
 
         // Initialize storage
         File conduitsFile = new File(getDataFolder(), "conduits.yml");
         store = new ConduitStore(conduitsFile, getLogger());
 
         // Initialize listener with config values
-        listener = new DrownedSpawnListener(this, store, chunkCheckRadius, autosaveTicks);
+        listener = new DrownedSpawnListener(this, store, chunkCheckRadius, autosaveTicks, debug);
 
         getLogger().info("ConduitSpawnStopper has been enabled!");
     }

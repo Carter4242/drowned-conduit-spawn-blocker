@@ -29,15 +29,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DrownedSpawnListener implements Listener {
     private final int chunkCheckRadius;
+    private final boolean debug;
 
     // World UUID -> (ChunkKey -> List<BlockPos>)
     private final Map<UUID, Map<Long, List<BlockPos>>> chunkedConduits = new ConcurrentHashMap<>();
     private final ConduitStore store;
     private BukkitTask autosaveTask;
 
-    public DrownedSpawnListener(Plugin plugin, ConduitStore store, int chunkCheckRadius, long autosaveTicks) {
+    public DrownedSpawnListener(Plugin plugin, ConduitStore store, int chunkCheckRadius, long autosaveTicks, boolean debug) {
         this.store = store;
         this.chunkCheckRadius = chunkCheckRadius;
+        this.debug = debug;
         store.load();
         loadConduitsFromStore();
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -129,9 +131,19 @@ public class DrownedSpawnListener implements Listener {
         if (!shouldPreventSpawn(event.getType(), event.getReason()))
             return;
 
-        if (isNearConduit(event.getSpawnLocation())) {
+        Location loc = event.getSpawnLocation();
+        if (isNearConduit(loc)) {
             event.setShouldAbortSpawn(true);
             event.setCancelled(true);
+            if (debug) {
+                Bukkit.getLogger().info(String.format("Drowned spawn prevented at [%d, %d, %d]", loc.getBlockX(),
+                        loc.getBlockY(), loc.getBlockZ()));
+            }
+        } else {
+            if (debug) {
+                Bukkit.getLogger().info(String.format("Drowned spawn allowed at [%d, %d, %d]", loc.getBlockX(),
+                        loc.getBlockY(), loc.getBlockZ()));
+            }
         }
     }
 
