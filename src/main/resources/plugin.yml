@@ -1,7 +1,7 @@
 name: ConduitSpawnStopper
 main: com.carter4242.conduitstopper.ConduitSpawnStopper
 version: ${project.version}
-api-version: 1.21
+api-version: 1.20
 commands: {}
 description: 'Stops drowned from spawning when there is a conduit within a configurable chunk range are nearby.'
 authors: ['Carter4242']
