@@ -105,6 +105,7 @@ public class DrownedSpawnListener implements Listener {
     public void onPreSpawn(com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent e) {
         if (!shouldCheck(e.getType(), e.getReason())) return;
         if (nearConduit(e.getSpawnLocation())) {
+            e.setShouldAbortSpawn(true);
             e.setCancelled(true);
         }
     }
