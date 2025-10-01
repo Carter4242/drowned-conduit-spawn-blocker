@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.carter4242</groupId>
     <artifactId>drowned-conduit-spawn-stopper</artifactId>
-    <version>1.2</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>DrownedConduitSpawnBlocker</name>
     <description>Stops drowned from spawning when conduits are nearby.</description>
