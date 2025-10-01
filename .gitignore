@@ -1,1 +1,4 @@
+# Maven Shade Plugin build artifact
+dependency-reduced-pom.xml
+
 target/

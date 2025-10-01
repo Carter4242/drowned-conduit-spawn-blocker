@@ -7,6 +7,9 @@ import com.carter4242.conduitstopper.storage.ConduitStore;
 
 import java.io.File;
 
+// Import the relocated Metrics class
+import org.bstats.bukkit.Metrics;
+
 /**
  * Main plugin class for DrownedConduitSpawnBlocker.
  * Prevents drowned from spawning near conduits.
@@ -36,6 +39,10 @@ public class DrownedConduitSpawnBlocker extends JavaPlugin {
 
         // Initialize listener with config values
         listener = new DrownedSpawnListener(this, store, chunkCheckRadius, autosaveTicks, debug);
+
+        // bStats Metrics integration
+        int pluginId = 27422;
+        new Metrics(this, pluginId);
 
         getLogger().info("ConduitSpawnStopper has been enabled!");
     }
