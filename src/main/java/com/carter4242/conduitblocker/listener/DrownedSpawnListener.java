@@ -41,6 +41,20 @@ public class DrownedSpawnListener implements Listener {
 
     // Counter for spawns prevented (for bStats)
     private int spawnsPrevented = 0;
+    // Track periods for more accurate average
+    private final List<Period> periods = new ArrayList<>();
+    // Track end time of last period (or plugin start)
+    private long lastPeriodEndTime = System.currentTimeMillis();
+
+    private static class Period {
+        final long timestamp;
+        final int count;
+
+        Period(long timestamp, int count) {
+            this.timestamp = timestamp;
+            this.count = count;
+        }
+    }
 
     public DrownedSpawnListener(Plugin plugin, ConduitStore store, int chunkCheckRadius, long autosaveTicks,
             boolean debug) {
@@ -217,11 +231,40 @@ public class DrownedSpawnListener implements Listener {
     }
 
     /**
-     * Returns the number of spawns prevented since last call and resets the counter.
+     * Returns the number of spawns prevented since last call, resets the counter,
+     * and logs the last sent time and average per hour.
      */
-    public synchronized int getAndResetSpawnsPrevented() {
+    public synchronized int getAndResetSpawnsPreventedAverage() {
         int value = spawnsPrevented;
         spawnsPrevented = 0;
-        return value;
+
+        long now = System.currentTimeMillis();
+
+        // Remove periods older than 1 hour
+        long oneHourAgo = now - 3600000L;
+        periods.removeIf(p -> p.timestamp < oneHourAgo);
+
+        periods.add(new Period(lastPeriodEndTime, value));
+
+        // Calculate total spawns for the last hour and find oldest timestamp
+        int totalSpawns = 0;
+        long start = now;
+        for (Period p : periods) {
+            totalSpawns += p.count;
+            if (p.timestamp < start)
+                start = p.timestamp;
+        }
+
+        double totalMillis = now - start;
+        double totalMinutes = totalMillis / 60000.0;
+        double averagePerHour;
+        if (totalMinutes > 0) {
+            averagePerHour = totalSpawns * 60.0 / totalMinutes;
+        } else {
+            averagePerHour = totalSpawns;
+        }
+
+        lastPeriodEndTime = now;
+        return (int) averagePerHour;
     }
 }

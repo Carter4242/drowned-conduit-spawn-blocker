@@ -6,9 +6,10 @@ import com.carter4242.conduitblocker.listener.DrownedSpawnListener;
 import com.carter4242.conduitblocker.storage.ConduitStore;
 
 import java.io.File;
+import java.util.concurrent.Callable;
 
-// Import the relocated Metrics class
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SingleLineChart;
 
 /**
  * Main plugin class for DrownedConduitSpawnBlocker.
@@ -43,12 +44,12 @@ public class DrownedConduitSpawnBlocker extends JavaPlugin {
         // bStats Metrics integration
         int pluginId = 27422;
         Metrics metrics = new Metrics(this, pluginId);
-        // Register custom chart for spawns prevented per hour
+        // Register custom chart for spawns prevented averaged over an hour
         metrics.addCustomChart(
-                new org.bstats.charts.SingleLineChart("spawns_prevented", new java.util.concurrent.Callable<Integer>() {
+                new SingleLineChart("spawns_prevented", new Callable<Integer>() {
                     @Override
                     public Integer call() {
-                        return listener.getAndResetSpawnsPrevented();
+                        return listener.getAndResetSpawnsPreventedAverage();
                     }
                 }));
 
