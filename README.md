@@ -4,6 +4,8 @@ Building underwater is often impossible because of the huge numbers of drowned t
 
 DrownedConduitSpawnBlocker is a simple Minecraft paper plugin for 1.20+ that prevents Drowned from spawning near placed conduits. Automatically tracks conduit placement/removal and saves their locations for efficient spawn prevention.
 
+People using this plugin -- https://bstats.org/plugin/bukkit/DrownedConduitSpawnBlocker/27422
+
 ## Features
 
 - Prevents drowned from spawning near conduits
